@@ -1,0 +1,107 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.3'
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${project.ext.springBootVersion}")
+    }
+}
+
+//plugins {
+//    id "com.jfrog.artifactory" version '4.18.3'
+//}
+
+apply plugin: 'org.springframework.boot'
+
+configurations {
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        exclude group: 'ch.qos.logback', module: 'logback-classic'
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j'
+    }
+}
+
+dependencies {
+    compile project(':routine-finder-antlr')
+    compile project(':routine-finder-enquiry')
+    compile project(':routine-finder-data')
+
+    compile project(':routine-finder-model')
+
+    compile "info.picocli:picocli:${project.ext.picocliVersion}"
+
+    compile "com.google.guava:guava:${project.ext.guavaVersion}"
+    compile "org.slf4j:slf4j-simple:${project.ext.slf4jVersion}"
+
+    implementation "com.fasterxml.jackson.core:jackson-databind:${project.ext.jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-core:${project.ext.jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:${project.ext.jacksonVersion}"
+
+    compile "com.google.cloud:google-cloud-storage:${project.ext.gcpStorageVersion}"
+
+    implementation "info.picocli:picocli-spring-boot-starter:${project.ext.picocliVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${project.ext.jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-core:${project.ext.jacksonVersion}"
+
+    annotationProcessor "info.picocli:picocli-codegen:${project.ext.picocliVersion}"
+
+    testImplementation "org.codehaus.groovy:groovy:${project.ext.groovyVersion}"
+
+    testImplementation platform("org.spockframework:spock-bom:${project.ext.spockVersion}")
+    testImplementation "org.spockframework:spock-core"
+
+    testImplementation "net.bytebuddy:byte-buddy:${project.ext.byteBuddyVersion}"
+    testImplementation "org.objenesis:objenesis:${project.ext.objenesisVersion}"
+}
+
+springBoot {
+    buildInfo()
+}
+
+bootJar {
+    manifest {
+        attributes(
+                'Implementation-Title': 'Routine Finder CLI',
+                'Implementation-Version': archiveVersion
+        )
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact bootJar
+        }
+    }
+}
+
+artifactory {
+    def destination = repositoryKey
+    contextUrl = 'https://oxy.jfrog.io/oxy'
+
+    publish {
+        repository {
+            repoKey = destination
+            username = "${artifactory_username}"
+            password = "${artifactory_password}"
+        }
+
+        defaults {
+            publications('mavenJava')
+
+            publishBuildInfo = true
+            publishArtifacts = true
+            publishPom = true
+        }
+    }
+
+}
+
+artifactoryPublish.dependsOn('bootJar')
+

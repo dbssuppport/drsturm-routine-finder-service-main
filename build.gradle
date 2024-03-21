@@ -1,0 +1,112 @@
+buildscript {
+
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath "gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:4.6.2"
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:latest.release"
+    }
+}
+
+plugins {
+    id 'idea'
+    id "io.freefair.lombok" version "5.3.0"
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'groovy'
+    id 'java'
+    id 'info.solidsoft.pitest' version '1.5.1'
+}
+
+allprojects {
+    apply from: "${rootDir}/version-info.gradle"
+
+    group = 'com.e2x.bigcommerce'
+    sourceCompatibility = '11'
+
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'info.solidsoft.pitest'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'info.solidsoft.pitest'
+    apply plugin: 'jacoco'
+    apply plugin: 'checkstyle'
+    apply plugin: 'com.github.spotbugs'
+    apply plugin: 'maven-publish'
+    apply plugin: 'com.jfrog.artifactory'
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url = "https://oxy.jfrog.io/artifactory/lib-bigcommerce-api-release-local"
+            credentials {
+                username = "${artifactory_username}"
+                password = "${artifactory_password}"
+            }
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+        finalizedBy jacocoTestReport
+    }
+
+    jacocoTestReport {
+        dependsOn test
+
+        classDirectories.setFrom(
+                fileTree(dir: "build/classes/java/main")
+        )
+    }
+
+    pitest {
+        testPlugin = "junit5"
+        //adds dependency to org.pitest:pitest-junit5-plugin and sets "testPlugin" to "junit5"
+        junit5PluginVersion = '0.12'
+    }
+
+    checkstyleMain {
+        source ='src/main/java'
+    }
+
+    spotbugsMain {
+        reports {
+            xml {
+                enabled = true
+                destination = file("$buildDir/reports/spotbugs/main.xml")
+            }
+        }
+    }
+
+    spotbugsTest {
+        enabled = false
+    }
+
+    tasks.withType(Checkstyle) {
+        exclude 'com/e2x/bigcommerce/routinefinder/antlr/generated/**'
+
+        reports {
+            xml.enabled true
+            html.enabled true
+        }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:${project.ext.springBootVersion}")
+        }
+    }
+}
+
+

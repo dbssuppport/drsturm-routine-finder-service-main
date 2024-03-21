@@ -1,0 +1,8 @@
+rootProject.name = 'routine-finder-service'
+
+include 'routine-finder-service'
+include 'routine-finder-antlr'
+include 'routine-finder-enquiry'
+include 'routine-finder-cli'
+include 'routine-finder-data'
+include 'routine-finder-model'

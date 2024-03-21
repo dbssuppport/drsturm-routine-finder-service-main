@@ -1,0 +1,15 @@
+#use this profile to test local start-ups with sandbox GCP or other local development configuration tests....
+routine-finder-service:
+  bucket-name: routine-enquiry-graph-ci
+
+spring:
+  cloud:
+    gcp:
+      core:
+        enabled: true
+      config:
+        enabled: true
+      storage:
+        enabled: true
+      secretmanager:
+        enabled: false

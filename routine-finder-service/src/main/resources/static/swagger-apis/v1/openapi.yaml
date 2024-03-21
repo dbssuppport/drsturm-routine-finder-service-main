@@ -1,0 +1,255 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Routine Finder Service API
+  description: ''
+
+paths:
+  '/bc/store/{storeHashId}/customer/{customerId}/routine':
+    parameters:
+      - $ref: '#/components/parameters/storeHashId'
+      - $ref: '#/components/parameters/customerId'
+    get:
+      summary: returns a new routine enquiry or existing routine associated to a customer
+      tags:
+        - routine
+      responses:
+        200:
+          $ref: '#/components/responses/RoutineEnquiry'
+        400:
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/RequestInError'
+    put:
+      summary: operation to progress the customer routine enquiry which will return either a series of steps or further questions to answer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoutineEnquiry'
+            examples:
+              AdvanceRoutineEnquiry:
+                $ref: '#/components/examples/AdvanceRoutineEnquiry'
+
+      responses:
+        200:
+          $ref: '#/components/responses/RoutineEnquiry'
+        400:
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/RequestInError'
+
+components:
+  parameters:
+    storeHashId:
+      name: storeHashId
+      in: path
+      required: true
+      description: BigCommerce Store hash id.
+      schema:
+        type: string
+
+    customerId:
+      name: customerId
+      in: path
+      required: true
+      description: customer Id.
+      schema:
+        type: integer
+
+  schemas:
+    ApiError:
+      description: Can contain one or many errors describing the reasons
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        attributes:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Attribute'
+        errors:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Error'
+      example:
+        code: an.error.code
+        message: an error occurred that should be displayed
+
+    Attribute:
+      type: object
+      properties:
+        code:
+          type: string
+        value:
+          type: string
+
+    Option:
+      type: object
+      properties:
+        code:
+          type: string
+        text:
+          type: string
+
+    Question:
+      type: object
+      properties:
+        id:
+          type: string
+        progress:
+          description: number indicating the longest theoritical number of questions to answer before being shown a routine
+          type: number
+        text:
+          type: string
+        answered:
+          type: boolean
+        maxAllowedAnswers:
+          type: number
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/Option'
+        answers:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+        error:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Error'
+        valid:
+          type: boolean
+
+      example:
+        - id: age
+          text: how old are you?
+          answered: true
+          maxAllowedAnswers: 1
+          options:
+            - code: 18-25
+              text: Between 18 and 25
+            - code: 26-35
+              text: Between 26 and 35
+          answers:
+            - 17-25
+          type: text
+          valid: false
+          error:
+            - code: invalid answer
+              message: you have provided an invalid answer
+
+        - id: age
+          text: how old are you?
+          answered: true
+          maxAllowedAnswers: 1
+          options:
+            - code: 18-25
+              text: Between 18 and 25
+            - code: 26-35
+              text: Between 26 and 35
+          answers:
+            - 18-25
+          valid: true
+
+    Sku:
+      type: object
+      properties:
+        id:
+          type: string
+      example:
+        id: SKU0001
+
+    Routine:
+      type: object
+      properties:
+        id:
+          type: string
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/Step'
+
+    Step:
+      type: object
+      properties:
+        sku:
+          $ref: '#/components/schemas/Sku'
+      example:
+        sku:
+          id: SKU-000-121
+
+    RoutineEnquiry:
+      properties:
+        complete:
+          type: boolean
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+        routines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Routine'
+
+    Error:
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        attributes:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Attribute'
+
+  responses:
+    RoutineEnquiry:
+      description: successful routine operation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoutineEnquiry'
+
+    NotFound:
+      description: the requested resource could not be found
+
+    RequestInError:
+      description: an error has occurred either on the client or server side
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+          examples:
+            DefaultError:
+              $ref: '#/components/examples/DefaultError'
+
+  examples:
+    DefaultError:
+      value:
+        code: internal.error
+        message: an error occurred
+
+    AdvanceRoutineEnquiry:
+      value:
+        questions:
+          - id: concerns
+            answers:
+              - pollution
+              - sunlight

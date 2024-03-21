@@ -1,0 +1,212 @@
+{
+  "formatVersion": 3,
+  "id": "root",
+  "ideas": {
+    "1": {
+      "title": "age",
+      "id": 1,
+      "attr": {
+        "position": [
+          -485.675537109375,
+          -324.9609375,
+          1
+        ],
+        "style": {
+          "backgroundColor": "#00CCFF"
+        }
+      },
+      "ideas": {
+        "2": {
+          "title": "options",
+          "attr": {
+            "parentConnector": {
+              "lineStyle": "solid"
+            }
+          },
+          "ideas": {
+            "1": {
+              "title": "18-24",
+              "attr": {
+                "style": {
+                  "backgroundColor": "#FFCC00"
+                },
+                "parentConnector": {
+                  "arrow": "to"
+                },
+                "position": [
+                  154.22671508789062,
+                  -83.97265625,
+                  2
+                ]
+              },
+              "ideas": {},
+              "id": 12
+            },
+            "2": {
+              "title": "25-34",
+              "attr": {
+                "style": {
+                  "backgroundColor": "#FFCC00"
+                },
+                "parentConnector": {
+                  "arrow": "to"
+                },
+                "position": [
+                  166.11343383789062,
+                  1.01171875,
+                  1
+                ]
+              },
+              "id": 13
+            }
+          },
+          "id": 11
+        },
+        "3": {
+          "title": "age is 25-34",
+          "attr": {
+            "style": {
+              "backgroundColor": "#99CC00"
+            }
+          },
+          "ideas": {
+            "2": {
+              "title": "STEP 1: Cleanser\nSTEP 2: Facial Scrub\nSTEP 3: Hyaluronic Serum\nSTEP 4: Face Cream Rich",
+              "attr": {
+                "style": {
+                  "backgroundColor": "#FFFF00",
+                  "fontMultiplier": 1.25,
+                  "width": 271,
+                  "textAlign": "left"
+                },
+                "position": [
+                  -27.089874267578125,
+                  203.04296875,
+                  3
+                ]
+              },
+              "ideas": {},
+              "id": 30
+            }
+          },
+          "id": 26
+        },
+        "-1": {
+          "title": "age is 18-24",
+          "attr": {
+            "style": {
+              "backgroundColor": "#99CC00"
+            },
+            "position": [
+              207.85137939453125,
+              0.0234375,
+              1
+            ]
+          },
+          "ideas": {
+            "3": {
+              "title": "skin type",
+              "ideas": {
+                "2": {
+                  "title": "skin type is fair",
+                  "attr": {
+                    "style": {
+                      "backgroundColor": "#99CC00"
+                    },
+                    "parentConnector": {
+                      "arrow": "to"
+                    }
+                  },
+                  "ideas": {
+                    "2": {
+                      "title": "STEP 1: Cleanser\nSTEP 2: Facial Scrub\nSTEP 3: Hyaluronic Serum\nSTEP 4: Face Cream Rich",
+                      "attr": {
+                        "style": {
+                          "backgroundColor": "#FFFF00",
+                          "fontMultiplier": 1.25,
+                          "width": 271,
+                          "textAlign": "left"
+                        },
+                        "position": [
+                          216.82809448242188,
+                          -70.98046875,
+                          1
+                        ]
+                      },
+                      "ideas": {},
+                      "id": 16
+                    }
+                  },
+                  "id": 8
+                },
+                "3": {
+                  "title": "options",
+                  "attr": {
+                    "parentConnector": {
+                      "lineStyle": "solid"
+                    }
+                  },
+                  "ideas": {
+                    "1": {
+                      "title": "fair",
+                      "attr": {
+                        "style": {
+                          "backgroundColor": "#FFCC00"
+                        },
+                        "parentConnector": {
+                          "arrow": "to"
+                        },
+                        "position": [
+                          154.22671508789062,
+                          -83.97265625,
+                          2
+                        ]
+                      },
+                      "ideas": {},
+                      "id": 32
+                    },
+                    "2": {
+                      "title": "dry",
+                      "attr": {
+                        "style": {
+                          "backgroundColor": "#FFCC00"
+                        },
+                        "parentConnector": {
+                          "arrow": "to"
+                        },
+                        "position": [
+                          166.11343383789062,
+                          1.01171875,
+                          1
+                        ]
+                      },
+                      "id": 33
+                    }
+                  },
+                  "id": 31
+                }
+              },
+              "id": 6,
+              "attr": {
+                "position": [
+                  258.4257507324219,
+                  81.0234375,
+                  2
+                ],
+                "style": {
+                  "backgroundColor": "#00CCFF"
+                }
+              }
+            }
+          },
+          "id": 3
+        }
+      }
+    }
+  },
+  "attr": {
+    "theme": "topdownStandard"
+  },
+  "title": "root",
+  "links": []
+}

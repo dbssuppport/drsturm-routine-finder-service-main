@@ -1,0 +1,17 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+dependencies {
+    implementation "com.google.guava:guava:${project.ext.guavaVersion}"
+
+    testImplementation "org.codehaus.groovy:groovy:${project.ext.groovyVersion}"
+
+    testImplementation platform("org.spockframework:spock-bom:${project.ext.spockVersion}")
+    testImplementation "org.spockframework:spock-core"
+
+    testImplementation "net.bytebuddy:byte-buddy:${project.ext.byteBuddyVersion}"
+    testImplementation "org.objenesis:objenesis:${project.ext.objenesisVersion}"
+}

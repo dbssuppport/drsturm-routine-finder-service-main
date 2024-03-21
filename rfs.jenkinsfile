@@ -1,0 +1,111 @@
+podTemplate(
+        containers: [
+                containerTemplate(name: 'jdk11', image: 'gradle:6.6.0-jdk11', ttyEnabled: true, command: 'cat'),
+                containerTemplate(name: 'cloud-sdk', image: 'google/cloud-sdk:323.0.0', ttyEnabled: true, command: 'cat'),
+                containerTemplate(name: 'golang', image: 'harbor.e2x.com/library/golang:v1.13.1-alpine', ttyEnabled: true, command: 'cat')
+        ]
+) {
+    node(POD_LABEL) {
+        try {
+
+            Properties properties = new Properties()
+
+            stage("initialise") {
+                onJdkPod {
+                    checkout scm
+
+                    script {
+                        String content = readFile("gradle.properties")
+                        properties.load(new StringReader(content))
+                        VERSION = properties.version
+                    }
+
+                    sh "printenv"
+                }
+            }
+
+             stage("build") {
+                 onJdkPod {
+                     sh "./gradlew clean assemble"
+                 }
+             }
+
+             stage("test") {
+                 onJdkPod {
+                     sh "./gradlew check"
+
+                     junit '**/build/test-results/**/*.xml'
+
+                     jacoco()
+
+                     recordIssues(tools: [
+                             checkStyle(pattern: '**/build/reports/checkstyle/main.xml'),
+                             spotBugs(pattern: '**/build/reports/spotbugs/main.xml', useRankAsPriority: true)]
+                     )
+                 }
+             }
+
+            if (isPublishable()) {
+                stage("publish") {
+                    onJdkPod {
+                        def publishVersion = VERSION
+                        def repositoryKey = 'drsturm-snapshot-local'
+
+                        if (isReleaseBranch()) {
+                            def shortRevision = sh script: "git rev-parse --short HEAD", returnStdout: true
+                            publishVersion = "${publishVersion}-${env.BUILD_NUMBER}-${shortRevision.replace("\\\n", "")}"
+                            repositoryKey = 'drsturm-release-local'
+                        } else {
+                            publishVersion = VERSION
+                            if (!VERSION.contains('-SNAPSHOT')) {
+                                publishVersion += '-SNAPSHOT'
+                            }
+                        }
+
+                        sh "./gradlew clean bootJar"
+                        sh "./gradlew routine-finder-service:artifactoryPublish -PrepositoryKey='$repositoryKey' -Pversion=$publishVersion "
+                        sh "./gradlew routine-finder-cli:artifactoryPublish -PrepositoryKey='$repositoryKey' -Pversion=$publishVersion "
+                    }
+                }
+            }
+        } catch(e) {
+            currentBuild.result = "FAILURE"
+            throw e
+        # notifying by email 
+        } finally { 
+            step(
+                    [$class: "Mailer", notifyEveryUnstableBuild: true, recipients: "dbs.dev@e2x.co.uk", sendToIndividuals: true]
+            )
+        }
+    }
+}
+
+def isPublishable() {
+    env.GERRIT_EVENT_TYPE == "change-merged" && (isReleaseBranch() || isBranch('master'))
+}
+
+def isReleaseBranch() {
+    isBranch('release')
+}
+
+def isBranch(String branch) {
+    env.GERRIT_BRANCH == branch
+}
+
+def onCloudSdkPod(String baseDir = './', Closure cmd) {
+    container('cloud-sdk') {
+        dir(baseDir) {
+            cmd()
+        }
+    }
+}
+
+def onJdkPod(String baseDir = './', Closure cmd) {
+    container('jdk11') {
+        withCredentials([usernamePassword(credentialsId: "artifactory", usernameVariable: "ORG_GRADLE_PROJECT_artifactory_username", passwordVariable: "ORG_GRADLE_PROJECT_artifactory_password")]) {
+            dir(baseDir) {
+                cmd()
+            }
+        }
+    }
+}

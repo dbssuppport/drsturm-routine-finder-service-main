@@ -1,0 +1,58 @@
+apply plugin: 'antlr'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+/**
+ * Without the next section Gradle will add a 'compile' dependency on Antlr3:
+ * https://github.com/gradle/gradle/issues/820
+ */
+configurations {
+    compile {
+        extendsFrom = extendsFrom.findAll { it != configurations.antlr }
+    }
+}
+
+dependencies {
+    antlr "org.antlr:antlr4:${project.ext.antlrVersion}"
+
+    compile "org.antlr:antlr4-runtime:${project.ext.antlrVersion}"
+
+    implementation "com.google.guava:guava:${project.ext.guavaVersion}"
+    implementation "org.slf4j:slf4j-simple:${project.ext.slf4jVersion}"
+
+    testImplementation "org.codehaus.groovy:groovy:${project.ext.groovyVersion}"
+
+    testImplementation platform("org.spockframework:spock-bom:${project.ext.spockVersion}")
+    testImplementation "org.spockframework:spock-core"
+
+    testImplementation "net.bytebuddy:byte-buddy:${project.ext.byteBuddyVersion}"
+    testImplementation "org.objenesis:objenesis:${project.ext.objenesisVersion}"
+}
+
+spotbugs {
+    ignoreFailures = true
+    excludeFilter = file("$projectDir/config/exclude.xml")
+}
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+
+    // Keep a copy of generated sources
+    doLast {
+        copy {
+            from "${buildDir}/generated-src/antlr/main"
+            into "src/main/java/com/e2x/bigcommerce/routinefinder/antlr/generated"
+        }
+
+        project.delete fileTree("${buildDir}/generated-src/antlr/main").include('*.*')
+    }
+}
+
+compileJava.dependsOn(generateGrammarSource)
+
+clean.doLast {
+    file('generated-src').deleteDir()
+}

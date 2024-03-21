@@ -1,0 +1,126 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.ext.springBootVersion}"
+        classpath "gradle.plugin.io.gatling.gradle:gatling-gradle-plugin:${project.ext.gatlingVersion}"
+    }
+}
+
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.gatling.gradle'
+
+configurations {
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        exclude group: 'ch.qos.logback', module: 'logback-classic'
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j'
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "com.google.cloud:spring-cloud-gcp-dependencies:${project.ext.springCloudGcpVersion}"
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${project.ext.springCloudVersion}"
+    }
+}
+
+dependencies {
+    implementation project(':routine-finder-enquiry')
+    implementation project(':routine-finder-data')
+    implementation project(':routine-finder-model')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    implementation 'com.google.cloud:spring-cloud-gcp-starter-storage'
+    implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager'
+
+    implementation "io.springfox:springfox-boot-starter:${project.ext.springFoxVersion}"
+
+    implementation("com.google.guava:guava:${project.ext.guavaVersion}")
+
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    testImplementation "de.codecentric.hikaku:hikaku-openapi:${project.ext.hikakuVersion}"
+    testImplementation "de.codecentric.hikaku:hikaku-spring:${project.ext.hikakuVersion}"
+
+    testImplementation "org.codehaus.groovy:groovy:${project.ext.groovyVersion}"
+
+    testImplementation platform("org.spockframework:spock-bom:${project.ext.spockVersion}")
+    testImplementation "org.spockframework:spock-core"
+    testImplementation "org.spockframework:spock-spring"
+
+    testImplementation "net.bytebuddy:byte-buddy:${project.ext.byteBuddyVersion}"
+    testImplementation "org.objenesis:objenesis:${project.ext.objenesisVersion}"
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation('org.springframework.security:spring-security-test')
+    testImplementation "com.github.tomakehurst:wiremock-jre8:${project.ext.wiremockVersion}"
+}
+
+bootRun {
+    args = ["--spring.profiles.active=dev"]
+
+    jvmArgs=["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5001"]
+}
+
+springBoot {
+    buildInfo()
+}
+
+bootJar {
+    manifest {
+        attributes(
+                'Implementation-Title': 'DBS Routine Finder Service',
+                'Implementation-Version': archiveVersion
+        )
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact bootJar
+        }
+    }
+}
+
+gatling {
+    toolVersion = project.ext.gatlingVersion
+    jvmArgs = ['-server', '-Xms512M', '-Xmx1G']
+    systemProperties = ['file.encoding': 'UTF-8']
+}
+
+artifactory {
+    def destination = repositoryKey
+    contextUrl = 'https://oxy.jfrog.io/oxy'
+
+    publish {
+        repository {
+            repoKey = destination
+            username = "${artifactory_username}"
+            password = "${artifactory_password}"
+        }
+
+        defaults {
+            publications('mavenJava')
+
+            publishBuildInfo = true
+            publishArtifacts = true
+            publishPom = true
+        }
+    }
+
+}
+
+artifactoryPublish.dependsOn('bootJar')

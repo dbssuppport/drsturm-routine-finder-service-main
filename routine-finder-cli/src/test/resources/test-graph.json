@@ -1,0 +1,114 @@
+grammar RoutineFinder;
+
+@header {
+package com.e2x.bigcommerce.routinefinder.antlr.generated;
+}
+
+// parser
+start
+    : expr
+    ;
+
+and_or
+    : AND
+    | OR
+    ;
+
+expr
+    : match_rule
+    | match_rule and_or expr
+    ;
+
+in_operand
+    : IN
+    | NOT IN
+    ;
+
+is_operand
+    : IS
+    | IS NOT
+    ;
+
+match_rule
+    : QUESTION is_operand VALUE
+    | QUESTION in_operand '(' values ')'
+    ;
+
+values
+    : VALUE
+    | VALUE ',' values
+    ;
+
+steps
+    : STEP
+    ;
+
+step
+    : STEP WS DIGIT COLUMN VALUE
+    ;
+
+
+// Lexer
+OR
+    : 'or'
+    ;
+
+AND
+    : 'and'
+    ;
+
+COMMA
+    : ','
+    ;
+
+LB
+    : '('
+    ;
+RB
+    : ')'
+    ;
+
+COLUMN
+    : ':'
+    ;
+
+NOT
+    : 'not'
+    ;
+
+IS
+    : WS + 'is' + WS
+    ;
+
+IN
+    : WS + 'in' + WS
+    ;
+
+QUESTION
+    : 'age'
+    | 'skin type'
+    | 'skin tone'
+    | 'skin concerns'
+    | 'daily usage'
+    | 'routine type'
+    ;
+
+DIGIT
+    : ('0'..'9')
+    ;
+
+STEP
+    : 'STEP'
+    ;
+
+WS
+    : (' ' | '\t')+ -> skip
+    ;
+
+VALUE
+    : ('a'..'z' | 'A'..'Z' | '0'..'9' | '+' | '-')+
+    ;
+
+ANY
+    : .
+    ;

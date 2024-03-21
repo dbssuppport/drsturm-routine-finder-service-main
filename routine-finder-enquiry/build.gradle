@@ -1,0 +1,23 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+dependencies {
+    compile project(':routine-finder-antlr')
+
+    compile "org.jgrapht:jgrapht-core:${project.ext.jGraphTVersion}"
+    compile "org.jgrapht:jgrapht-io:${project.ext.jGraphTVersion}"
+
+    implementation "com.google.guava:guava:${project.ext.guavaVersion}"
+    implementation "org.slf4j:slf4j-simple:${project.ext.slf4jVersion}"
+
+    testImplementation "org.codehaus.groovy:groovy:${project.ext.groovyVersion}"
+
+    testImplementation platform("org.spockframework:spock-bom:${project.ext.spockVersion}")
+    testImplementation "org.spockframework:spock-core"
+
+    testImplementation "net.bytebuddy:byte-buddy:${project.ext.byteBuddyVersion}"
+    testImplementation "org.objenesis:objenesis:${project.ext.objenesisVersion}"
+}

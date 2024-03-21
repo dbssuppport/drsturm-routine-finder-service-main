@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    gcp:
+      config:
+        enabled: false
+      storage:
+        enabled: false
+      core:
+        enabled: false
+      secretmanager:
+        enabled: false

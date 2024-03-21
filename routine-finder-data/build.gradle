@@ -1,0 +1,24 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+dependencies {
+    implementation project(':routine-finder-enquiry')
+
+    implementation "com.google.guava:guava:${project.ext.guavaVersion}"
+    implementation "com.google.cloud:google-cloud-storage:${project.ext.gcpStorageVersion}"
+
+    implementation "org.slf4j:slf4j-simple:${project.ext.slf4jVersion}"
+
+    implementation "org.springframework:spring-context"
+
+    testImplementation "org.codehaus.groovy:groovy:${project.ext.groovyVersion}"
+
+    testImplementation platform("org.spockframework:spock-bom:${project.ext.spockVersion}")
+    testImplementation "org.spockframework:spock-core"
+
+    testImplementation "net.bytebuddy:byte-buddy:${project.ext.byteBuddyVersion}"
+    testImplementation "org.objenesis:objenesis:${project.ext.objenesisVersion}"
+}
