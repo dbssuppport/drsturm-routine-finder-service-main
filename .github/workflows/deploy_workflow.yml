@@ -25,7 +25,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Build
-        run: sh .github/scripts/build.sh "${{env.GITHUB_SHA::6}}-${{github.run_number}}"
+        run: sh .github/scripts/build.sh "${{env.GITHUB_SHA}}-${{github.run_number}}"
       - name: Share artifact
         uses: actions/upload-artifact@v3
         with:
@@ -33,6 +33,7 @@ jobs:
           path: routine-finder-cli/build/libs
   deploy_uat:
         name: Deploy UAT
+        needs: build
         runs-on: ubuntu-latest
         container: 
           image: google/cloud-sdk:428.0.0-slim
