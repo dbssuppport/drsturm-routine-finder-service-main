@@ -46,7 +46,7 @@ jobs:
             name: routine-finder
             path: routine-finder-cli/build/libs
         - name: Deploy
-          run: sh .github/scripts/deploy.sh ${UAT_KEY_FILE} ${UAT_PROJECT_ID} "routine-finder-cli-${{github.sha}}-${{github.run_number}}.jar"
+          run: sh .github/scripts/deploy.sh ${UAT_KEY_FILE} ${UAT_PROJECT_ID} ${UAT_LIBRARIES_BUCKET} "routine-finder-cli-${{github.sha}}-${{github.run_number}}.jar"
 
   deploy_prd:       
     name: Deploy PRD
