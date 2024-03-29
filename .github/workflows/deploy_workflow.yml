@@ -31,8 +31,21 @@ jobs:
         with:
           name: routine-finder
           path: routine-finder-cli/build/libs
-      - name: Deploy DEV
-        run: sh .github/scripts/deploy.sh
+  deploy_uat:
+        name: Deploy UAT
+        runs-on: ubuntu-latest
+        container: 
+          image: google/cloud-sdk:428.0.0-slim
+        steps:
+        - name: Check out repository code
+          uses: actions/checkout@v3
+        - name: Get atifact
+          uses: actions/download-artifact@master
+          with:
+            name: routine-finder
+            path: routine-finder-cli/build/libs
+        - name: Deploy
+          run: sh .github/scripts/deploy.sh
 
   deploy_prd:       
     name: Deploy PRD
