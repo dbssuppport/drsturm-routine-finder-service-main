@@ -25,7 +25,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Build
-        run: sh .github/scripts/build.sh
+        run: sh .github/scripts/build.sh ${GITHUB_SHA::6}
       - name: Deploy DEV
         run: sh .github/scripts/deploy.sh
 
