@@ -25,7 +25,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Build
-        run: sh .github/scripts/build.sh "${{env.GITHUB_SHA}}-${{github.run_number}}"
+        run: sh .github/scripts/build.sh "${{github.sha}}-${{github.run_number}}"
       - name: Share artifact
         uses: actions/upload-artifact@v3
         with:
@@ -41,12 +41,12 @@ jobs:
         - name: Check out repository code
           uses: actions/checkout@v3
         - name: Get atifact
-          uses: actions/download-artifact@master
+          uses: actions/download-artifact@v3
           with:
             name: routine-finder
             path: routine-finder-cli/build/libs
         - name: Deploy
-          run: sh .github/scripts/gcp.sh ${UAT_KEY_FILE} ${UAT_PROJECT_ID}
+          run: sh .github/scripts/deploy.sh ${UAT_KEY_FILE} ${UAT_PROJECT_ID} "routine-finder-cli-${{github.sha}}-${{github.run_number}}.jar"
 
   deploy_prd:       
     name: Deploy PRD
