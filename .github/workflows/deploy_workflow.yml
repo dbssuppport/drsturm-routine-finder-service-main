@@ -25,7 +25,12 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Build
-        run: sh .github/scripts/build.sh "${GITHUB_SHA::6}-${{github.run_number}}"
+        run: sh .github/scripts/build.sh "${GITHUB_SHA}-${{github.run_number}}"
+      - name: Share artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: routine-finder
+          path: routine-finder-cli/build/libs
       - name: Deploy DEV
         run: sh .github/scripts/deploy.sh
 
