@@ -8,4 +8,4 @@ chmod +x ./gradlew
 ./gradlew clean assemble
 ./gradlew check
 ./gradlew clean bootJar -Pversion=${VERSION}
-ls -al routine-finder-service/build/libs
+ls -al 
