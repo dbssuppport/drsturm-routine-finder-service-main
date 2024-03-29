@@ -1,0 +1,53 @@
+name: 'Deploy Workflow'
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - '*'
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  deploy_uat:
+    name: Deploy UAT
+    runs-on: ubuntu-latest
+    container:
+      image: gradle:6.6.0-jdk11
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Build
+        run: |
+         chmod +x ./gradlew
+         ./gradlew clean assemble
+      - name: Test
+        run: ./gradlew check
+      - name: Deploy DEV
+        run: ./gradlew clean bootJar
+
+  deploy_prd:       
+    name: Deploy PRD
+    needs: deploy_uat
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    container:
+      image: gradle:6.6.0-jdk11
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Build
+        run: |
+         chmod +x ./gradlew
+         ./gradlew clean assemble
+      - name: Test
+        run: ./gradlew check
+      - name: Deploy DEV
+        run: ./gradlew clean bootJar
