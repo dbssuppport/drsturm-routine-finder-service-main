@@ -16,8 +16,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy_uat:
-    name: Deploy UAT
+  build:
+    name: Build Artifacts
     runs-on: ubuntu-latest
     container:
       image: gradle:6.6.0-jdk11
@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: sh .github/scripts/build.sh "${{env.GITHUB_SHA::6}}-${{github.run_number}}"
       - name: Share artifact
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3
         with:
           name: routine-finder
           path: routine-finder-cli/build/libs
