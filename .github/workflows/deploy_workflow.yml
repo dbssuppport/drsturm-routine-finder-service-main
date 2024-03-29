@@ -44,7 +44,7 @@ jobs:
           uses: actions/download-artifact@v3
           with:
             name: routine-finder
-            path: routine-finder-cli/build/libs
+            path: routine-finder-cli/build/libs/routine-finder-cli-${{github.sha}}-${{github.run_number}}.jar
         - name: Deploy
           run: sh .github/scripts/deploy.sh ${{secrets.UAT_KEY_FILE}} ${{vars.UAT_PROJECT_ID}} ${{vars.UAT_LIBRARIES_BUCKET}} "routine-finder-cli-${{github.sha}}-${{github.run_number}}.jar"
 
