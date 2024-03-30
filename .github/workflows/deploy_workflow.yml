@@ -63,16 +63,21 @@ jobs:
     needs: deploy_uat
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    container:
-      image: gradle:6.6.0-jdk11
+    container: 
+      image: google/cloud-sdk:428.0.0-slim
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v3
-      - name: Build
-        run: |
-         chmod +x ./gradlew
-         ./gradlew clean assemble
-      - name: Test
-        run: ./gradlew check
-      - name: Deploy DEV
-        run: ./gradlew clean bootJar
+    - name: Check out repository code
+      uses: actions/checkout@v3
+    - name: Get cli atifact
+      uses: actions/download-artifact@v3
+      with:
+        name: routine-finder-cli
+        path: routine-finder-cli/build/libs/
+    - name: Get service atifact
+      uses: actions/download-artifact@v3
+      with:
+        name: routine-finder-service
+        path: routine-finder-service/build/libs/
+    - name: Deploy
+      run: sh .github/scripts/deploy.sh ${{secrets.PRD_KEY_FILE}} ${{vars.PRD_PROJECT_ID}} ${{vars.PRD_LIBRARIES_BUCKET}} "routine-finder-cli/build/libs/routine-finder-cli-${{github.sha}}-${{github.run_number}}.jar" "routine-finder-service/build/libs/routine-finder-service-${{github.sha}}-${{github.run_number}}.jar"
+
