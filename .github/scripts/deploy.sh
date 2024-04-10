@@ -17,4 +17,4 @@ gcloud auth login --cred-file=client-secret.json
 gcloud config set project ${GOOGLE_PROJECT}
 gcloud storage cp ${ARTIFACT_CLI_PATH} gs://${LIBRARIES_BUCKET}/routine-finder-cli/${ARTIFACT_CLI}
 gcloud storage cp ${ARTIFACT_SERVICE_PATH} gs://${LIBRARIES_BUCKET}/routine-finder-service/${ARTIFACT_SERVICE}
-gcloud app deploy ${ARTIFACT_SERVICE_PATH} --appyaml=".github/scripts/${ENV}.yaml" --project="${GOOGLE_PROJECT}"
+gcloud app deploy ${ARTIFACT_SERVICE_PATH} --appyaml=".github/scripts/app_config/${ENV}.yaml" --project="${GOOGLE_PROJECT}"
