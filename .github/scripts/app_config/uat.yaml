@@ -1,3 +1,4 @@
+service: routine-finder-service
 runtime: java11
 env: standard
 instance_class: F2
