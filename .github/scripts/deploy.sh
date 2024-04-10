@@ -7,6 +7,7 @@ GOOGLE_PROJECT=$2
 LIBRARIES_BUCKET=$3
 ARTIFACT_CLI_PATH=$4
 ARTIFACT_SERVICE_PATH=$5
+ENV=$6
 
 ARTIFACT_CLI=$(echo $ARTIFACT_CLI_PATH | cut -d '/' -f4)
 ARTIFACT_SERVICE=$(echo $ARTIFACT_CLI_PATH | cut -d '/' -f4)
@@ -16,4 +17,4 @@ gcloud auth login --cred-file=client-secret.json
 gcloud config set project ${GOOGLE_PROJECT}
 gcloud storage cp ${ARTIFACT_CLI_PATH} gs://${LIBRARIES_BUCKET}/routine-finder-cli/${ARTIFACT_CLI}
 gcloud storage cp ${ARTIFACT_SERVICE_PATH} gs://${LIBRARIES_BUCKET}/routine-finder-service/${ARTIFACT_SERVICE}
-#gcloud app deploy ${ARTIFACT_SERVICE_PATH} --appyaml="./services/routine-finder-service/${ENVIRONMENT}/app.yaml" --project="${GOOGLE_PROJECT}" --quiet
+gcloud app deploy ${ARTIFACT_SERVICE_PATH} --appyaml=".github/scripts/${ENV}.yaml" --project="${GOOGLE_PROJECT}"
