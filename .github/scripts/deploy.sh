@@ -13,7 +13,6 @@ ROUTINE_FINDER_BUCKET=$7
 ARTIFACT_CLI=$(echo $ARTIFACT_CLI_PATH | cut -d '/' -f4)
 ARTIFACT_SERVICE=$(echo $ARTIFACT_CLI_PATH | cut -d '/' -f4)
 
-add-apt-repository ppa:openjdk-r/ppa
 apt-get -y update
 apt-get -y install openjdk-11-jre-headless
 
