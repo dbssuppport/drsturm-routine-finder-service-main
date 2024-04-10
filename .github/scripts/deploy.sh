@@ -13,7 +13,7 @@ ROUTINE_FINDER_BUCKET=$7
 ARTIFACT_CLI=$(echo $ARTIFACT_CLI_PATH | cut -d '/' -f4)
 ARTIFACT_SERVICE=$(echo $ARTIFACT_CLI_PATH | cut -d '/' -f4)
 
-apt-get -y install openjdk-11-jdk
+apt-get -y install openjdk-11-jre-headless
 
 echo ${KEY_FILE} | base64 -d > client-secret.json
 gcloud auth login --cred-file=client-secret.json 
