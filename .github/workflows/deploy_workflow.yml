@@ -56,7 +56,7 @@ jobs:
             name: routine-finder-service
             path: routine-finder-service/build/libs/
         - name: Deploy
-          run: sh .github/scripts/deploy.sh ${{secrets.UAT_KEY_FILE}} ${{vars.UAT_PROJECT_ID}} ${{vars.UAT_LIBRARIES_BUCKET}} "routine-finder-cli/build/libs/routine-finder-cli-${{github.sha}}-${{github.run_number}}.jar" "routine-finder-service/build/libs/routine-finder-service-${{github.sha}}-${{github.run_number}}.jar" uat
+          run: sh .github/scripts/deploy.sh ${{secrets.UAT_KEY_FILE}} ${{vars.UAT_PROJECT_ID}} ${{vars.UAT_LIBRARIES_BUCKET}} "routine-finder-cli/build/libs/routine-finder-cli-${{github.sha}}-${{github.run_number}}.jar" "routine-finder-service/build/libs/routine-finder-service-${{github.sha}}-${{github.run_number}}.jar" uat routine-enquiry-graph-uat
 
   deploy_prd:       
     name: Deploy PRD
@@ -79,5 +79,5 @@ jobs:
         name: routine-finder-service
         path: routine-finder-service/build/libs/
     - name: Deploy
-      run: sh .github/scripts/deploy.sh ${{secrets.PRD_KEY_FILE}} ${{vars.PRD_PROJECT_ID}} ${{vars.PRD_LIBRARIES_BUCKET}} "routine-finder-cli/build/libs/routine-finder-cli-${{github.sha}}-${{github.run_number}}.jar" "routine-finder-service/build/libs/routine-finder-service-${{github.sha}}-${{github.run_number}}.jar" prd
+      run: sh .github/scripts/deploy.sh ${{secrets.PRD_KEY_FILE}} ${{vars.PRD_PROJECT_ID}} ${{vars.PRD_LIBRARIES_BUCKET}} "routine-finder-cli/build/libs/routine-finder-cli-${{github.sha}}-${{github.run_number}}.jar" "routine-finder-service/build/libs/routine-finder-service-${{github.sha}}-${{github.run_number}}.jar" prd routine-enquiry-graph-production
 
