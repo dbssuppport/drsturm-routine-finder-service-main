@@ -1,0 +1,12 @@
+runtime: java11
+env: standard
+instance_class: B2
+handlers:
+  - url: .*
+    script: auto
+env_variables:
+  GCP_SECRETS_ENABLED: 'False'
+  SPRING_PROFILES_ACTIVE: production
+manual_scaling:
+  instances: 1
+service_account: dbs-prod@appspot.gserviceaccount.com
